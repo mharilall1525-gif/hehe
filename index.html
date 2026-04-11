@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>for you</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #c084fc, #a855f7, #f472b6);
+  background-size: 300% 300%;
+  animation: gradientMove 12s ease infinite;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  text-align: center;
+}
+
+@keyframes gradientMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+.container {
+  max-width: 420px;
+  padding: 30px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 25px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 60px rgba(192,132,252,0.5);
+  z-index: 1;
+}
+
+.stitch {
+  width: 140px;
+  margin-bottom: 15px;
+  animation: floaty 4s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.text {
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 90px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 30px;
+  background: white;
+  color: #a855f7;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.hidden { display: none; }
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  flex-direction: column;
+}
+
+.heart {
+  position: fixed;
+  animation: floatUp 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(100vh); opacity: 1; }
+  to { transform: translateY(-10vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay" onclick="start()">
+  <h2>tap here 💜</h2>
+</div>
+
+<audio id="music" loop preload="auto">
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container hidden" id="main">
+  <img src="stitch.png" class="stitch">
+  <div class="text" id="text"></div>
+  <button onclick="next()">continue</button>
+</div>
+
+<div class="container hidden" id="final">
+  <img src="stitch.png" class="stitch">
+  <h2>so…</h2>
+  <p>may i be your boyfriend?</p>
+  <button onclick="yes()">yes 🙂</button>
+  <button onclick="notYet()">i need more time</button>
+</div>
+
+<script>
+const lines = [
+  "hey alyssa :) 💙",
+  "",
+  "i didn’t really know how to say this in a normal way",
+  "so i made this instead",
+  "",
+  "but honestly…",
+  "",
+  "i’ve really liked every moment with you",
+  "like genuinely",
+  "",
+  "you make everything feel easy",
+  "and i catch myself looking forward to seeing you all the time",
+  "",
+  "i know i said i like taking things slow",
+  "and i meant that",
+  "",
+  "but i also don’t want this to feel like something temporary",
+  "",
+  "because to me it isn’t",
+  "",
+  "i really like you"
+];
+
+let index = 0;
+
+function start() {
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("main").classList.remove("hidden");
+
+  const music = document.getElementById("music");
+  music.volume = 0.4;
+  music.play();
+
+  spawnHearts();
+  typeLine();
+}
+
+function typeLine() {
+  let text = lines[index];
+
+  if (text === "") {
+    setTimeout(next, 700);
+    return;
+  }
+
+  let i = 0;
+  let display = "";
+
+  let typing = setInterval(() => {
+    display += text[i];
+    document.getElementById("text").innerHTML = display;
+    i++;
+    if (i >= text.length) clearInterval(typing);
+  }, 35);
+}
+
+function next() {
+  index++;
+  if (index < lines.length) {
+    document.getElementById("text").innerHTML = "";
+    typeLine();
+  } else {
+    setTimeout(() => {
+      document.getElementById("main").classList.add("hidden");
+      document.getElementById("final").classList.remove("hidden");
+    }, 800);
+  }
+}
+
+function yes() {
+  document.getElementById("final").innerHTML =
+    "<h2>💖</h2><p>wait… really?</p><p>okay yeah that just made me smile like crazy</p><p>come here :)</p>";
+}
+
+function notYet() {
+  document.getElementById("final").innerHTML =
+    "<p>that’s okay :)</p>" +
+    "<p>i meant what i said about taking things slow</p>" +
+    "<p>i’m just really happy getting to know you 💙</p>";
+}
+
+function spawnHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+
+    const hearts = ["💗","💖","💜","💞"];
+    heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (Math.random() * 10 + 16) + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+  }, 600);
+}
+</script>
+
+</body>
+</html>
